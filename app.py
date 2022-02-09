@@ -132,8 +132,8 @@ def main(token: str, engine: str):
 
 
 if __name__ == '__main__':
-    db_engine = "mysql+pymysql://sa:ads4Sashka@localhost/issue"
-    bot_token = '1094375695:AAH53Kc0KmQY34pPVGyU8i0q7XbYNk0WCho'
+    db_engine = ""
+    bot_token = ''
     # command line argument parser with help message
     arg_parser = argparse.ArgumentParser(description="IssueBot", formatter_class=argparse.RawTextHelpFormatter)
     arg_parser.add_argument("-t", dest="token", required=True, help="Telegram Bot API Token")
