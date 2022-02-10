@@ -51,7 +51,7 @@ class DbOperator:
 
     def drop_all(self):
         if self.engine:
-            Base.metadata.drop_all(self.engine, checkfirst=True)
+            Base.metadata.drop_all(self.engine, checkfirst=True, pool_pre_ping=True)
 
     @catch_session
     def add(self, model):
