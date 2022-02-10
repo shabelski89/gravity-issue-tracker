@@ -14,6 +14,7 @@ from functools import wraps
 
 
 def main(token: str, engine: str):
+    """Main function of app"""
     bot = IssueBot(token=token, tracker=DbOperator(db=engine))
     bot.tracker.initialization()
     bot.tracker.create_all()
@@ -25,6 +26,7 @@ def main(token: str, engine: str):
         ])
 
     def catch_users_messages(func):
+        """Decorator for auto adding user and message to database"""
         @wraps(func)
         def wrapper(*args, **kwargs):
             user_id = args[0].from_user.id
@@ -93,7 +95,7 @@ def main(token: str, engine: str):
     @bot.message_handler(content_types=['text'])
     @catch_users_messages
     def observer(message):
-        """Handling message, which is comment issues"""
+        """Handling message in one thread by issue"""
         if message.reply_to_message:
 
             message_chain = list(flatten(get_message_chain(message_id=message.id)))
@@ -106,12 +108,12 @@ def main(token: str, engine: str):
                     break
 
     def get_issues(status=IssueStatus.Open.status_id):
-        """"""
+        """Return pair issue and message_id"""
         return bot.get_all(field=(IssueStates.issue_number, IssueStates.message_id),
                            filter=(IssueStates.status_id == status,))
 
     def get_message_chain(message_id):
-        """"""
+        """Return messages chain from children to parent"""
         result = []
         if message_id is None or message_id in result:
             return result
@@ -132,18 +134,10 @@ def main(token: str, engine: str):
 
 
 if __name__ == '__main__':
-    db_engine = ""
-    bot_token = ''
     # command line argument parser with help message
     arg_parser = argparse.ArgumentParser(description="IssueBot", formatter_class=argparse.RawTextHelpFormatter)
     arg_parser.add_argument("-t", dest="token", required=True, help="Telegram Bot API Token")
     arg_parser.add_argument("-d", dest="database", required=True, help="SQLAlchemy DataBase Engine URL")
     arg_parser.add_argument("-a", dest="admins", required=False, help="IssueBot admins")
     args = arg_parser.parse_args()
-    bot = IssueBot(token=args.token, tracker=DbOperator(db=args.database))
-    # bot = IssueBot(token=bot_token, tracker=DbOperator(db=db_engine))
-
     main(token=args.token, engine=args.database)
-
-
-
